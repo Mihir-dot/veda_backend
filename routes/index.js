@@ -6,6 +6,6 @@ const router = express.Router();
 const userRoutes = require('./userRoutes');
 
 // Use route handlers
-router.use('/users', userRoutes);
+router.use( userRoutes);
 
 module.exports = router;
