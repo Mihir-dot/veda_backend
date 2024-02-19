@@ -78,7 +78,7 @@ module.exports = {
         }
 
         // Extract data from request body
-        const { name, email, phone, location } = req.body;
+        const {  email, phone, location } = req.body;
         try {
             // Create new contact object
             const newContact = new Contact({
