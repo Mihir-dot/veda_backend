@@ -2,9 +2,9 @@ const mongoose = require('mongoose');
 
 const serviceSchema = new mongoose.Schema({
     name: { type: String, required: true },
-    titelOne: { type: String, required: true },
+    titleOne: { type: String, required: true },
     containtOne: { type: String, required: true},
-    titelTwo: { type: String, required: true },
+    titleTwo: { type: String, required: true },
     containtTwo: { type: String, required: true},
     banner: { type: String, required: true },
     bannerLocation: { type: String, required: true },

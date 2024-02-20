@@ -34,9 +34,13 @@ router.get('/get/services/:id',
     servicesController.getServiceById,
 );
 
-// Route for getting a service name 
+// Route for getting a service data 
 router.get('/get/allservices', 
-    servicesController.getServiceName,
+    servicesController.getServiceData,
 );
 
+// Route for getting a service name 
+router.get('/get/allservicesname', 
+    servicesController.getServiceName,
+);
 module.exports = router;

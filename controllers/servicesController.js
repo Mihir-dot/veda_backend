@@ -24,29 +24,17 @@ const upload = multer({ storage: storage });
 // Controller function for creating a new service
 const createService = async (req, res) => {
     try {
-        const { name, titelOne, containtOne, titelTwo, containtTwo } = req.body;
-        console.log('====================================');
-        console.log('req==========',req);
-        console.log('====================================');
-        console.log('====================================');
-        console.log('req.body=======',req.body);
-        console.log('====================================');
+        const { name, titleOne, containtOne, titleTwo, containtTwo } = req.body;
+       
         const banner = req.files['banner'][0].filename;
-        console.log('====================================');
-        console.log('banner =================',banner);
-        console.log('====================================');
         const bannerLocation = req.files['banner'][0].path;
-        const image = req.files['image'][0].filename;
-        console.log('====================================');
-        console.log('image =================',image);
-        console.log('====================================');
         const imageLocation = req.files['image'][0].path;
 
         const service = new Services({
             name,
-            titelOne,
+            titleOne,
             containtOne,
-            titelTwo,
+            titleTwo,
             containtTwo,
             banner,
             bannerLocation,
@@ -67,12 +55,12 @@ const createService = async (req, res) => {
 const updateService = async (req, res) => {
     try {
         const serviceId = req.params.id;
-        const { name, titelOne, containtOne, titelTwo, containtTwo } = req.body;
+        const { name, titleOne, containtOne, titleTwo, containtTwo } = req.body;
         let updateFields = {
             name,
-            titelOne,
+            titleOne,
             containtOne,
-            titelTwo,
+            titleTwo,
             containtTwo
         };
 
@@ -116,6 +104,20 @@ const getServiceById = async (req, res) => {
 };
 
 
+// Get service Data
+const getServiceData = async (req, res) => {
+    try {
+        // Fetch all services from the database
+        const allServices = await Services.find();
+
+        // Return the services as a JSON response
+        res.status(200).json(allServices);
+    } catch (error) {
+        // If an error occurs, send an error response
+        res.status(500).json({ message: error.message });
+    }   
+};
+
 // Get service name
 const getServiceName = async (req, res) => {
     try {
@@ -136,5 +138,6 @@ module.exports = {
     createService,
     updateService,
     getServiceById,
+    getServiceData,
     getServiceName
 };
