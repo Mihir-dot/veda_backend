@@ -28,6 +28,7 @@ const createService = async (req, res) => {
        
         const banner = req.files['banner'][0].filename;
         const bannerLocation = req.files['banner'][0].path;
+        const image = req.files['image'][0].filename;
         const imageLocation = req.files['image'][0].path;
 
         const service = new Services({
