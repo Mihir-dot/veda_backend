@@ -19,10 +19,7 @@ const storage = multer.diskStorage({
 // Initialize multer upload
 const upload = multer({ storage: storage });
 // Route for creating a new service
-// Route for creating a new service
 router.post('/create/services', upload.fields([{ name: 'banner', maxCount: 1 }, { name: 'image', maxCount: 1 }]), servicesController.createService);
-
-
 
 // Route for updating a service
 router.put('/update/services/:id', 

@@ -61,9 +61,24 @@ module.exports = {
         }
     },
 
+    // getAllContacts: async (req, res) => {
+    //     try {
+    //         const contacts = await Contact.find();
+    //         res.json(contacts);
+    //     } catch (error) {
+    //         res.status(500).json({ error: error.message });
+    //     }
+    // },
     getAllContacts: async (req, res) => {
         try {
-            const contacts = await Contact.find();
+            let contacts = await Contact.find();
+    
+            // Iterate over each contact and update the path property
+            contacts = contacts.map(contact => {
+                contact.path = contact.path.replace(/\\/g, '\\');
+                return contact;
+            });
+    
             res.json(contacts);
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -84,7 +99,8 @@ module.exports = {
             const newContact = new Contact({
                 email,
                 phone,
-                location:req.file.path,
+                path:req.file.path,
+                location:location,
                 image: req.file.filename// Save the path of the uploaded image
             });
 
