@@ -38,6 +38,11 @@ router.post('/contacts', authenticateJWT, upload.single('image'), [
     check('email').isEmail().withMessage('Invalid email address'),
     check('phone').isMobilePhone().withMessage('Invalid phone number')
 ], userController.createContact);
+router.put('/contacts/update/:id', authenticateJWT, upload.single('image'), [
+    check('email').isEmail().withMessage('Invalid email address'),
+    check('phone').isMobilePhone().withMessage('Invalid phone number')
+], userController.updateContact);
+
 router.get('/get-contacts/:id', authenticateJWT, userController.getContactById); // Get contact by ID
 router.delete('/delete-contacts/:id', authenticateJWT, userController.deleteContactById); // Delete contact by ID
 

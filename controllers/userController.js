@@ -107,6 +107,24 @@ module.exports = {
         }
     },
 
+    // Update contact
+    updateContact: async (req, res) => {
+        const contactId = req.params.id;
+        const { email, phone, location } = req.body;
+        try {
+            let updateFields = { email, phone, location };
+            if (req.file) {
+                updateFields.image = req.file.filename
+                updateFields.path = req.file.path
+            }
+            await Contact.findByIdAndUpdate(contactId, updateFields);
+            res.status(200).json({ message: 'Contact updated successfully' });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
+    },
+
     getContactById: async (req, res) => {
         const { id } = req.params;
         try {
@@ -148,8 +166,8 @@ module.exports = {
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
-    }
-    ,
+    },
+
     // Create a new review
     createReview: async (req, res) => {
         const { text, rating, name, post } = req.body;
@@ -208,6 +226,7 @@ module.exports = {
             res.status(500).json({ message: error.message });
         }
     },
+
     // delete Ratting by id
     deleteRattingById: async (req, res) => {
         const { id } = req.params;
