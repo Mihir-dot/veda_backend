@@ -10,10 +10,10 @@ const multer = require('multer');
 
 // Set up storage for multer
 const storage = multer.diskStorage({
-    destination: function(req, file, cb) {
+    destination: function (req, file, cb) {
         cb(null, './uploads/services/');
     },
-    filename: function(req, file, cb) {
+    filename: function (req, file, cb) {
         cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
     }
 });
@@ -24,8 +24,8 @@ const upload = multer({ storage: storage });
 // Controller function for creating a new service
 const createService = async (req, res) => {
     try {
-        const { name, titleOne, containtOne, titleTwo, containtTwo } = req.body;
-       
+        const { name, sortName, titleOne, containtOne, titleTwo, containtTwo } = req.body;
+
         const banner = req.files['banner'][0].filename;
         const bannerLocation = req.files['banner'][0].path;
         const image = req.files['image'][0].filename;
@@ -33,6 +33,7 @@ const createService = async (req, res) => {
 
         const service = new Services({
             name,
+            sortName,
             titleOne,
             containtOne,
             titleTwo,
@@ -59,6 +60,7 @@ const updateService = async (req, res) => {
         const { name, titleOne, containtOne, titleTwo, containtTwo } = req.body;
         let updateFields = {
             name,
+            sortName,
             titleOne,
             containtOne,
             titleTwo,
@@ -116,29 +118,66 @@ const getServiceData = async (req, res) => {
     } catch (error) {
         // If an error occurs, send an error response
         res.status(500).json({ message: error.message });
-    }   
+    }
 };
 
 // Get service name
 const getServiceName = async (req, res) => {
     try {
         // Fetch all services from the database
-        const allServices = await Services.find({},"name");
+        const allServices = await Services.find({}, "name sortName");
 
         // Return the services as a JSON response
         res.status(200).json(allServices);
     } catch (error) {
         // If an error occurs, send an error response
         res.status(500).json({ message: error.message });
-    }   
+    }
 };
+
+// delete Service by id
+const deleteServiceById = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const services = await Services.findById(id);
+        if (!services) {
+            return res.status(404).json({ error: 'services not found' });
+        }
+
+        // Check if the image file exists
+        const imagePath = path.join(__dirname, '..', services.imageLocation);
+        const bannerPath = path.join(__dirname, '..', services.bannerLocation);
+        try {
+            await fs.access(imagePath, fs.constants.F_OK); // Check if file exists
+            // If file exists, proceed to delete it
+            await fs.unlink(imagePath);
+            await fs.access(bannerPath, fs.constants.F_OK); // Check if file exists
+            // If file exists, proceed to delete it
+            await fs.unlink(bannerPath);
+        } catch (accessError) {
+            // Handle the error if the file does not exist
+            if (accessError.code !== 'ENOENT') {
+                throw accessError; // re-throw error if it's not "file not found"
+            }
+        }
+
+        // Delete the contact from the database
+        await Services.deleteOne({ _id: id });
+
+        res.json({ message: 'Services deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}
 
 
 module.exports = {
     createService: upload.fields([{ name: 'banner', maxCount: 1 }, { name: 'image', maxCount: 1 }]),
     createService,
+    updateService: upload.fields([{ name: 'banner', maxCount: 1 }, { name: 'image', maxCount: 1 }]),
     updateService,
     getServiceById,
     getServiceData,
-    getServiceName
+    getServiceName,
+    deleteServiceById
 };

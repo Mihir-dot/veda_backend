@@ -1,17 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const servicesController = require('../controllers/servicesController');
-const authenticateJWT = require('../services/authMiddleware'); 
+const authenticateJWT = require('../services/authMiddleware');
 const { check } = require('express-validator');
 const path = require('path');
 const multer = require('multer');
 
 // Set up storage for multer
 const storage = multer.diskStorage({
-    destination: function(req, file, cb) {
+    destination: function (req, file, cb) {
         cb(null, './uploads/services/');
     },
-    filename: function(req, file, cb) {
+    filename: function (req, file, cb) {
         cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
     }
 });
@@ -22,22 +22,25 @@ const upload = multer({ storage: storage });
 router.post('/create/services', upload.fields([{ name: 'banner', maxCount: 1 }, { name: 'image', maxCount: 1 }]), servicesController.createService);
 
 // Route for updating a service
-router.put('/update/services/:id', 
-    servicesController.updateService,
+router.put('/update/services/:id', upload.fields([{ name: 'banner', maxCount: 1 }, { name: 'image', maxCount: 1 }]), servicesController.updateService,
 );
 
 // Route for getting a service by ID
-router.get('/get/services/:id', 
+router.get('/get/services/:id',
     servicesController.getServiceById,
 );
 
-// Route for getting a service data 
-router.get('/get/allservices', 
+// Route for getting a service data
+router.get('/get/allservices',
     servicesController.getServiceData,
 );
 
-// Route for getting a service name 
-router.get('/get/allservicesname', 
+// Route for getting a service name
+router.get('/get/allservicesname',
     servicesController.getServiceName,
+);
+// Route for delete service
+router.delete('/delete/service/:id',
+    servicesController.deleteServiceById,
 );
 module.exports = router;
