@@ -170,7 +170,6 @@ const deleteServiceById = async (req, res) => {
     }
 }
 
-
 module.exports = {
     createService: upload.fields([{ name: 'banner', maxCount: 1 }, { name: 'image', maxCount: 1 }]),
     createService,

@@ -6,6 +6,7 @@ const { validationResult } = require('express-validator');
 const Contact = require('../models/contact');
 const fs = require('fs').promises;
 const path = require('path');
+
 module.exports = {
     getAllUsers: async (req, res) => {
         try {
@@ -17,10 +18,10 @@ module.exports = {
     },
 
     createUser: async (req, res) => {
-        const { firstname,lastname, email, password } = req.body;
+        const { firstname, lastname, email, password } = req.body;
 
         try {
-            const newUser = new User({firstname,lastname, email, role: "Admin", password });
+            const newUser = new User({ firstname, lastname, email, role: "Admin", password });
             await newUser.save();
             res.status(201).json(newUser);
         } catch (error) {
@@ -72,13 +73,13 @@ module.exports = {
     getAllContacts: async (req, res) => {
         try {
             let contacts = await Contact.find();
-    
+
             // Iterate over each contact and update the path property
             contacts = contacts.map(contact => {
                 contact.path = contact.path.replace(/\\/g, '\\');
                 return contact;
             });
-    
+
             res.json(contacts);
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -93,20 +94,20 @@ module.exports = {
         }
 
         // Extract data from request body
-        const {  email, phone, location } = req.body;
+        const { email, phone, location } = req.body;
         try {
             // Create new contact object
             const newContact = new Contact({
                 email,
                 phone,
-                path:req.file.path,
-                location:location,
+                path: req.file.path,
+                location: location,
                 image: req.file.filename// Save the path of the uploaded image
             });
 
             // Save contact to database
             await newContact.save();
-            
+
             res.status(201).json(newContact);
         } catch (error) {
             res.status(500).json({ error: error.message });
