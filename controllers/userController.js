@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
 const Contact = require('../models/contact');
+const Review = require('../models/review');
 const fs = require('fs').promises;
 const path = require('path');
 
@@ -62,14 +63,6 @@ module.exports = {
         }
     },
 
-    // getAllContacts: async (req, res) => {
-    //     try {
-    //         const contacts = await Contact.find();
-    //         res.json(contacts);
-    //     } catch (error) {
-    //         res.status(500).json({ error: error.message });
-    //     }
-    // },
     getAllContacts: async (req, res) => {
         try {
             let contacts = await Contact.find();
@@ -156,5 +149,91 @@ module.exports = {
             res.status(500).json({ error: error.message });
         }
     }
-    // Other controller methods...
+    ,
+    // Create a new review
+    createReview: async (req, res) => {
+        const { text, rating, name, post } = req.body;
+        try {
+            const review = new Review({
+                text, rating, name, post, picture: req.file.filename, pictureLocation: req.file.path
+            });
+            await review.save();
+
+            res.status(201).json({ message: 'Review created successfully', review })
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
+    },
+
+    // Update review
+    updateReview: async (req, res) => {
+        const reviewId = req.params.id;
+        const { text, rating, name, post } = req.body;
+        try {
+            let updateFields = { text, rating, name, post };
+            if (req.file) {
+                updateFields.picture = req.file.filename
+                updateFields.pictureLocation = req.file.path
+            }
+            await Review.findByIdAndUpdate(reviewId, updateFields);
+            res.status(200).json({ message: 'Service updated successfully' });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
+    },
+
+    // Get ratting by ID
+    getRattingById: async (req, res) => {
+        try {
+            const ratting = await Review.findById(req.params.id);
+            if (!ratting) {
+                return res.status(404).json({ message: 'Ratting not found' });
+            }
+            res.status(200).json(ratting);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Server Error' });
+        }
+    },
+
+    // Get ratting Data
+    getRattingData: async (req, res) => {
+        try {
+            const allRatting = await Review.find();
+            res.status(200).json(allRatting);
+        } catch (error) {
+            // If an error occurs, send an error response
+            res.status(500).json({ message: error.message });
+        }
+    },
+    // delete Ratting by id
+    deleteRattingById: async (req, res) => {
+        const { id } = req.params;
+        try {
+            const review = await Review.findById(id);
+            if (!review) {
+                return res.status(404).json({ error: 'Ratting not found' });
+            }
+            // Check if the image file exists
+            const imagePath = path.join(__dirname, '..', review.pictureLocation);
+            try {
+                await fs.access(imagePath, fs.constants.F_OK); // Check if file exists
+                // If file exists, proceed to delete it
+                await fs.unlink(imagePath);
+            } catch (accessError) {
+                // Handle the error if the file does not exist
+                if (accessError.code !== 'ENOENT') {
+                    throw accessError; // re-throw error if it's not "file not found"
+                }
+            }
+
+            await Review.deleteOne({ _id: id });
+
+            res.json({ message: 'Ratting deleted successfully' });
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
 };

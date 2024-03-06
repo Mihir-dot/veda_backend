@@ -6,6 +6,7 @@ const authenticateJWT = require('../services/authMiddleware');
 const { check } = require('express-validator');
 const multer = require('multer');
 const _ = require("lodash");
+const path = require('path');
 const Social = require('../models/social');
 // Multer configuration for image upload
 const storage = multer.diskStorage({
@@ -19,6 +20,18 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+// Set up storage for multer
+const storage1 = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './uploads/ratting/');
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+    }
+});
+
+// Initialize multer upload
+const upload1 = multer({ storage: storage1 });
 // Contact routes
 router.get('/get-all-contacts', userController.getAllContacts);
 router.post('/contacts', authenticateJWT, upload.single('image'), [
@@ -34,10 +47,15 @@ router.post('/create/user', authenticateJWT, userController.createUser);
 router.post('/login', userController.loginUser);
 // Add more routes as needed
 
-
+// Ratting
+router.post('/create/ratting', authenticateJWT, upload1.single('picture'), userController.createReview);
+router.put('/update/ratting/:id', authenticateJWT, upload1.single('picture'), userController.updateReview);
+router.get('/get/ratting/:id', authenticateJWT, userController.getRattingById,);
+router.get('/get/allratting', userController.getRattingData);
+router.delete('/delete/ratting/:id', authenticateJWT, userController.deleteRattingById);
 
 // Social Routs
-router.put('/update/social/media', async (req, res) => {
+router.put('/update/social/media', authenticateJWT, async (req, res) => {
     try {
         const updatedSocialData = req.body; // Assuming request body contains the updated data
         const result = await Social.findOneAndUpdate({}, updatedSocialData, { new: true, upsert: true });
