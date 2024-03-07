@@ -60,9 +60,7 @@ const createAbout = async (req, res) => {
 const updateAbout = async (req, res) => {
     try {
         const aboutId = req.params.id;
-        console.log('aboutId: ', aboutId);
         const { name, titleOne, containtOne, titleTwo, containtTwo } = req.body;
-        console.log('name, titleOne, containtOne, titleTwo, containtTwo : ', name, titleOne, containtOne, titleTwo, containtTwo);
         let updateFields = {
             name,
             titleOne,
@@ -70,7 +68,31 @@ const updateAbout = async (req, res) => {
             titleTwo,
             containtTwo
         };
+        const about = await About.findById(id = aboutId);
+        if (!about) {
+            return res.status(404).json({ error: 'about not found' });
+        }
 
+        // Check if the image file exists
+        const imagePath = path.join(__dirname, '..', about.imageLocation);
+        const bannerPath = path.join(__dirname, '..', about.bannerLocation);
+        const homePageImagePath = path.join(__dirname, '..', about.homePageImageLocation);
+        try {
+            await fs.access(imagePath, fs.constants.F_OK); // Check if file exists
+            // If file exists, proceed to delete it
+            await fs.unlink(imagePath);
+            await fs.access(bannerPath, fs.constants.F_OK); // Check if file exists
+            // If file exists, proceed to delete it
+            await fs.unlink(bannerPath);
+            await fs.access(homePageImagePath, fs.constants.F_OK); // Check if file exists
+            // If file exists, proceed to delete it
+            await fs.unlink(homePageImagePath);
+        } catch (accessError) {
+            // Handle the error if the file does not exist
+            if (accessError.code !== 'ENOENT') {
+                throw accessError; // re-throw error if it's not "file not found"
+            }
+        }
         // If banner is being updated
         if (req.files['banner']) {
             const banner = req.files['banner'][0].filename;
@@ -152,7 +174,6 @@ const deleteAboutById = async (req, res) => {
     const { id } = req.params;
     try {
         const about = await About.findById(id);
-        console.log('about: ', about);
         if (!about) {
             return res.status(404).json({ error: 'about not found' });
         }
@@ -160,6 +181,7 @@ const deleteAboutById = async (req, res) => {
         // Check if the image file exists
         const imagePath = path.join(__dirname, '..', about.imageLocation);
         const bannerPath = path.join(__dirname, '..', about.bannerLocation);
+        const homePageImagePath = path.join(__dirname, '..', about.homePageImageLocation);
         try {
             await fs.access(imagePath, fs.constants.F_OK); // Check if file exists
             // If file exists, proceed to delete it
@@ -167,6 +189,9 @@ const deleteAboutById = async (req, res) => {
             await fs.access(bannerPath, fs.constants.F_OK); // Check if file exists
             // If file exists, proceed to delete it
             await fs.unlink(bannerPath);
+            await fs.access(homePageImagePath, fs.constants.F_OK); // Check if file exists
+            // If file exists, proceed to delete it
+            await fs.unlink(homePageImagePath);
         } catch (accessError) {
             // Handle the error if the file does not exist
             if (accessError.code !== 'ENOENT') {
