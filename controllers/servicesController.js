@@ -57,7 +57,7 @@ const createService = async (req, res) => {
 const updateService = async (req, res) => {
     try {
         const serviceId = req.params.id;
-        const { name, titleOne, containtOne, titleTwo, containtTwo } = req.body;
+        const { name, sortName, titleOne, containtOne, titleTwo, containtTwo } = req.body;
         let updateFields = {
             name,
             sortName,

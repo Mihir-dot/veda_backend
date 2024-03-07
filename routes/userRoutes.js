@@ -54,7 +54,7 @@ router.post('/login', userController.loginUser);
 
 // Ratting
 router.post('/create/ratting', authenticateJWT, upload1.single('picture'), userController.createReview);
-router.put('/update/ratting/:id', authenticateJWT, upload1.single('picture'), userController.updateReview);
+router.put('/update/ratting/:id', upload1.single('picture'), userController.updateReview);
 router.get('/get/ratting/:id', authenticateJWT, userController.getRattingById,);
 router.get('/get/allratting', userController.getRattingData);
 router.delete('/delete/ratting/:id', authenticateJWT, userController.deleteRattingById);
