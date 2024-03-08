@@ -81,4 +81,16 @@ router.get('/get/all/social/media', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
+
+// Get social media by id
+router.get('/get/social/media/ById/:id', async (req, res) => {
+    let { id } = req.params; // Change req.query to req.params
+    try {
+        const allSocialData = await Social.findOne({ _id: id }); // Assuming _id is the field in your model
+        res.json(allSocialData);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
 module.exports = router;
