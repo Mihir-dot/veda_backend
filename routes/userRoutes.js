@@ -87,6 +87,9 @@ router.get('/get/social/media/ById/:id', async (req, res) => {
     let { id } = req.params; // Change req.query to req.params
     try {
         const allSocialData = await Social.findOne({ _id: id }); // Assuming _id is the field in your model
+        if (!allSocialData) {
+            return res.status(404).json({ message: 'Social media not found. Please provide a valid ID.' });
+        }
         res.json(allSocialData);
     } catch (error) {
         console.error(error);
