@@ -19,10 +19,10 @@ const storage = multer.diskStorage({
 // Initialize multer upload
 const upload = multer({ storage: storage });
 // Route for creating a new About
-router.post('/create/about', upload.fields([{ name: 'banner', maxCount: 1 }, { name: 'image', maxCount: 1 }, { name: "homePageImage", maxCount: 1 }]), aboutController.createAbout);
+router.post('/create/about', upload.fields([{ name: 'banner', maxCount: 1 }, { name: 'visionBanner', maxCount: 1 }]), aboutController.createAbout);
 
 // Route for updating a About
-router.put('/update/about/:id', upload.fields([{ name: 'banner', maxCount: 1 }, { name: 'image', maxCount: 1 }, { name: "homePageImage", maxCount: 1 }]), aboutController.updateAbout);
+router.put('/update/about/:id', upload.fields([{ name: 'banner', maxCount: 1 }, { name: 'visionBanner', maxCount: 1 }]), aboutController.updateAbout);
 
 // Route for getting a About by ID
 router.get('/get/about/:id',

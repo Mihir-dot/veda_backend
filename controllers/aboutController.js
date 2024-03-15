@@ -24,27 +24,33 @@ const upload = multer({ storage: storage });
 // Controller function for creating a new About
 const createAbout = async (req, res) => {
     try {
-        const { name, titleOne, containtOne, titleTwo, containtTwo } = req.body;
+        const { name,
+            titleOne,
+            titleTwo,
+            containtOne,
+            visionTitleOne,
+            visionDesscriptionOne,
+            visionTitleTwo,
+            visionDesscriptionTwo, } = req.body;
 
         const banner = req.files['banner'][0].filename;
         const bannerLocation = req.files['banner'][0].path;
-        const image = req.files['image'][0].filename;
-        const imageLocation = req.files['image'][0].path;
-        const homePageImage = req.files['homePageImage'][0].filename;
-        const homePageImageLocation = req.files['homePageImage'][0].path;
+        const visionBanner = req.files['visionBanner'][0].filename;
+        const visionBannerLocation = req.files['visionBanner'][0].path;
 
         const about = new About({
             name,
             titleOne,
-            containtOne,
             titleTwo,
-            containtTwo,
+            containtOne,
+            visionTitleOne,
+            visionDesscriptionOne,
+            visionTitleTwo,
+            visionDesscriptionTwo,
             banner,
             bannerLocation,
-            image,
-            imageLocation,
-            homePageImage,
-            homePageImageLocation
+            visionBanner,
+            visionBannerLocation,
         });
 
         await about.save();
@@ -60,13 +66,23 @@ const createAbout = async (req, res) => {
 const updateAbout = async (req, res) => {
     try {
         const aboutId = req.params.id;
-        const { name, titleOne, containtOne, titleTwo, containtTwo } = req.body;
+        const { name,
+            titleOne,
+            titleTwo,
+            containtOne,
+            visionTitleOne,
+            visionDesscriptionOne,
+            visionTitleTwo,
+            visionDesscriptionTwo, } = req.body;
         let updateFields = {
             name,
             titleOne,
-            containtOne,
             titleTwo,
-            containtTwo
+            containtOne,
+            visionTitleOne,
+            visionDesscriptionOne,
+            visionTitleTwo,
+            visionDesscriptionTwo,
         };
         const about = await About.findById(id = aboutId);
         if (!about) {
@@ -74,19 +90,15 @@ const updateAbout = async (req, res) => {
         }
 
         // Check if the image file exists
-        const imagePath = path.join(__dirname, '..', about.imageLocation);
+        const visionBannerLocation = path.join(__dirname, '..', about.visionBannerLocation);
         const bannerPath = path.join(__dirname, '..', about.bannerLocation);
-        const homePageImagePath = path.join(__dirname, '..', about.homePageImageLocation);
         try {
-            await fs.access(imagePath, fs.constants.F_OK); // Check if file exists
+            await fs.access(visionBannerLocation, fs.constants.F_OK); // Check if file exists
             // If file exists, proceed to delete it
-            await fs.unlink(imagePath);
+            await fs.unlink(visionBannerLocation);
             await fs.access(bannerPath, fs.constants.F_OK); // Check if file exists
             // If file exists, proceed to delete it
             await fs.unlink(bannerPath);
-            await fs.access(homePageImagePath, fs.constants.F_OK); // Check if file exists
-            // If file exists, proceed to delete it
-            await fs.unlink(homePageImagePath);
         } catch (accessError) {
             // Handle the error if the file does not exist
             if (accessError.code !== 'ENOENT') {
@@ -102,19 +114,13 @@ const updateAbout = async (req, res) => {
         }
 
         // If image is being updated
-        if (req.files['image']) {
-            const image = req.files['image'][0].filename;
-            const imageLocation = req.files['image'][0].path;
-            updateFields.image = image;
-            updateFields.imageLocation = imageLocation;
+        if (req.files['visionBanner']) {
+            const visionBanner = req.files['visionBanner'][0].filename;
+            const visionBannerLocation = req.files['visionBanner'][0].path;
+            updateFields.visionBanner = visionBanner;
+            updateFields.visionBannerLocation = visionBannerLocation;
         }
-        // If home page image is being updated
-        if (req.files['homePageImage']) {
-            const homePageImage = req.files['homePageImage'][0].filename;
-            const homePageImageLocation = req.files['homePageImage'][0].path;
-            updateFields.homePageImage = homePageImage;
-            updateFields.homePageImageLocation = homePageImageLocation;
-        }
+
 
         await About.findByIdAndUpdate(aboutId, updateFields);
 
@@ -179,19 +185,15 @@ const deleteAboutById = async (req, res) => {
         }
 
         // Check if the image file exists
-        const imagePath = path.join(__dirname, '..', about.imageLocation);
+        const visionBannerLocation = path.join(__dirname, '..', about.visionBannerLocation);
         const bannerPath = path.join(__dirname, '..', about.bannerLocation);
-        const homePageImagePath = path.join(__dirname, '..', about.homePageImageLocation);
         try {
-            await fs.access(imagePath, fs.constants.F_OK); // Check if file exists
+            await fs.access(visionBannerLocation, fs.constants.F_OK); // Check if file exists
             // If file exists, proceed to delete it
-            await fs.unlink(imagePath);
+            await fs.unlink(visionBannerLocation);
             await fs.access(bannerPath, fs.constants.F_OK); // Check if file exists
             // If file exists, proceed to delete it
             await fs.unlink(bannerPath);
-            await fs.access(homePageImagePath, fs.constants.F_OK); // Check if file exists
-            // If file exists, proceed to delete it
-            await fs.unlink(homePageImagePath);
         } catch (accessError) {
             // Handle the error if the file does not exist
             if (accessError.code !== 'ENOENT') {
@@ -209,9 +211,9 @@ const deleteAboutById = async (req, res) => {
 }
 
 module.exports = {
-    createAbout: upload.fields([{ name: 'banner', maxCount: 1 }, { name: 'image', maxCount: 1 }, { name: "homePageImage", maxCount: 1 }]),
+    createAbout: upload.fields([{ name: 'banner', maxCount: 1 }, { name: 'visionBanner', maxCount: 1 }]),
     createAbout,
-    updateAbout: upload.fields([{ name: 'banner', maxCount: 1 }, { name: 'image', maxCount: 1 }, { name: "homePageImage", maxCount: 1 }]),
+    updateAbout: upload.fields([{ name: 'banner', maxCount: 1 }, { name: 'visionBanner', maxCount: 1 }]),
     updateAbout,
     getAboutById,
     getAboutData,
