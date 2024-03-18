@@ -121,7 +121,6 @@ const updateAbout = async (req, res) => {
             updateFields.visionBannerLocation = visionBannerLocation;
         }
 
-
         await About.findByIdAndUpdate(aboutId, updateFields);
 
         res.status(200).json({ message: 'About updated successfully' });

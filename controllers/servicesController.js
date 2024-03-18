@@ -142,7 +142,7 @@ const getServiceData = async (req, res) => {
 const getServiceName = async (req, res) => {
     try {
         // Fetch all services from the database
-        const allServices = await Services.find({}, "name sortName");
+        const allServices = await Services.find({}, "name sortName imageLocation");
 
         // Return the services as a JSON response
         res.status(200).json(allServices);
