@@ -7,11 +7,13 @@ const servicesRoutes = require('./servicesRoutes');
 const aboutRoutes = require('./aboutRoutes');
 const dashboardRoutes = require('./dashboardRoutes');
 const faqRoutes = require('./faqRoutes');
+const prodcastRoutes = require('./prodcastRoutes');
 // Use route handlers
 router.use(userRoutes);
 router.use(servicesRoutes);
 router.use(aboutRoutes);
 router.use(dashboardRoutes);
 router.use(faqRoutes);
+router.use(prodcastRoutes);
 
 module.exports = router;
