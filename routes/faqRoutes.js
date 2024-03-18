@@ -26,6 +26,9 @@ router.put('/update/faq/:id', async (req, res) => {
         const { question, answer } = req.body;
 
         const faq = await Faq.findById(id = faqId);
+        if (!faq) {
+            return res.status(404).json({ error: 'Faq not found' });
+        }
         let updateFields = {
             question, answer
         };

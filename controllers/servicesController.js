@@ -59,6 +59,9 @@ const updateService = async (req, res) => {
         const serviceId = req.params.id;
         const { name, sortName, titleOne, containtOne, titleTwo, containtTwo } = req.body;
         const services = await Services.findById(id = serviceId);
+        if (!services) {
+            return res.status(404).json({ error: 'services not found' });
+        }
         // Check if the image file exists
         const imagePath = path.join(__dirname, '..', services.imageLocation);
         const bannerPath = path.join(__dirname, '..', services.bannerLocation);

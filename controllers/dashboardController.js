@@ -78,6 +78,9 @@ const updateDashboard = async (req, res) => {
             homePageTitleTwo,
             homePageDescription, } = req.body;
         const dashboard = await Dashboard.findById(id = dashboardId);
+        if (!dashboard) {
+            return res.status(404).json({ error: 'dashboard not found' });
+        }
         // Check if the image file exists
         const banner1Location = path.join(__dirname, '..', dashboard.banner1Location);
         const banner2Location = path.join(__dirname, '..', dashboard.banner2Location);
