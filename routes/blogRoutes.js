@@ -36,7 +36,7 @@ router.get('/get/allblog',
 
 
 // Route for getting a blog name
-router.delete('/delete/prodcast/:id',
+router.delete('/delete/blog/:id',
     blogController.deleteBlogById,
 );
 
