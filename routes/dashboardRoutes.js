@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const servicesController = require('../controllers/dashboardController');
+const ModelPath = require('../models/path');
 const authenticateJWT = require('../services/authMiddleware');
 const { check } = require('express-validator');
 const path = require('path');
@@ -35,6 +36,19 @@ router.get('/get/allDashboard',
     servicesController.getDashboardData,
 );
 
+// Route for getting a dashboard data
+router.get('/get/allPath', async (req, res) => {
+    try {
+        // Fetch all dashboard from the database
+        const allPath = await ModelPath.find();
+
+        // Return the dashboard as a JSON response
+        res.status(200).json(allPath);
+    } catch (error) {
+        // If an error occurs, send an error response
+        res.status(500).json({ message: error.message });
+    }
+});
 // Route for delete dashboard
 router.delete('/delete/dashboard/:id',
     servicesController.deleteDashboardById,
