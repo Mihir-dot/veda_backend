@@ -130,7 +130,7 @@ const getServiceData = async (req, res) => {
         // Fetch all services from the database
         const allServices = await Services.find();
 
-        // Return the services as a JSON response
+        // Return the services as a JSON response 
         res.status(200).json(allServices);
     } catch (error) {
         // If an error occurs, send an error response
@@ -143,7 +143,7 @@ const getServiceName = async (req, res) => {
     try {
         // Fetch all services from the database
         const allServices = await Services.find({}, "name sortName imageLocation");
-
+        // 
         // Return the services as a JSON response
         res.status(200).json(allServices);
     } catch (error) {
