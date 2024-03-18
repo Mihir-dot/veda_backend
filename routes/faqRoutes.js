@@ -37,10 +37,19 @@ router.put('/update/faq/:id', async (req, res) => {
     }
 });
 
-// // Route for getting a dashboard by ID
-// router.get('/get/dashboard/:id',
-//     servicesController.getDashboardById,
-// );
+// // Route for getting a faq by ID
+router.get('/get/faq/:id', async (req, res) => {
+    try {
+        const faq = await Faq.findById(req.params.id);
+        if (!faq) {
+            return res.status(404).json({ message: 'Faq data not found' });
+        }
+        res.status(200).json(faq);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server Error' });
+    }
+});
 
 // Route for getting a FAQ data
 router.get('/get/allFaq', async (req, res) => {
@@ -57,7 +66,19 @@ router.get('/get/allFaq', async (req, res) => {
 });
 
 // // Route for delete dashboard
-// router.delete('/delete/dashboard/:id',
-//     servicesController.deleteDashboardById,
-// );
+router.delete('/delete/faq/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const faq = await Faq.findById(id);
+        if (!faq) {
+            return res.status(404).json({ error: 'Faq not found' });
+        }
+        // Delete the contact from the database
+        await Faq.deleteOne({ _id: id });
+
+        res.json({ message: 'Faq deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
 module.exports = router;
