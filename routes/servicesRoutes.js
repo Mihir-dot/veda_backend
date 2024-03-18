@@ -39,8 +39,10 @@ router.get('/get/allservices',
 router.get('/get/allservicesname',
     servicesController.getServiceName,
 );
+
 // Route for delete service
 router.delete('/delete/service/:id',
     servicesController.deleteServiceById,
 );
+
 module.exports = router;
