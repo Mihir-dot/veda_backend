@@ -9,6 +9,8 @@ const dashboardRoutes = require('./dashboardRoutes');
 const faqRoutes = require('./faqRoutes');
 const prodcastRoutes = require('./prodcastRoutes');
 const blogRoutes = require('./blogRoutes');
+const resourceRoutes = require('./resourceRoutes');
+
 // Use route handlers
 router.use(userRoutes);
 router.use(servicesRoutes);
@@ -17,5 +19,6 @@ router.use(dashboardRoutes);
 router.use(faqRoutes);
 router.use(prodcastRoutes);
 router.use(blogRoutes);
+router.use(resourceRoutes);
 
 module.exports = router;
