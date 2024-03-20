@@ -24,13 +24,15 @@ const upload = multer({ storage: storage });
 // Controller function for creating a new Blogs
 const createBlog = async (req, res) => {
     try {
-        const { title, description } = req.body;
+        const { title, description, expertise, email, phone_no } = req.body;
 
         const picture = req.files['picture'][0].filename;
         const pictureLocation = req.files['picture'][0].path;
         const blogs = new Blogs({
             title,
-            description,
+            description, expertise,
+            email,
+            phone_no,
             picture,
             pictureLocation,
         });
@@ -46,11 +48,8 @@ const createBlog = async (req, res) => {
 const updateBlog = async (req, res) => {
     try {
         const blogsId = req.params.id;
-        const { title, description, } = req.body;
-        let updateFields = {
-            title,
-            description,
-        };
+        const { title, description, expertise, email, phone_no } = req.body;
+        let updateFields = { title, description, expertise, email, phone_no };
         const blog = await Blogs.findById(id = blogsId);
         if (!blog) {
             return res.status(404).json({ error: 'Blogs not found' });
