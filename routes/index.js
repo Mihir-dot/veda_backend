@@ -10,6 +10,7 @@ const faqRoutes = require('./faqRoutes');
 const prodcastRoutes = require('./prodcastRoutes');
 const blogRoutes = require('./blogRoutes');
 const resourceRoutes = require('./resourceRoutes');
+const mailRoutes = require('./mailRoutes');
 
 // Use route handlers
 router.use(userRoutes);
@@ -20,5 +21,6 @@ router.use(faqRoutes);
 router.use(prodcastRoutes);
 router.use(blogRoutes);
 router.use(resourceRoutes);
+router.use(mailRoutes);
 
 module.exports = router;
