@@ -46,35 +46,37 @@ const createProdcast = async (req, res) => {
 const updateProdcast = async (req, res) => {
     try {
         const podcastId = req.params.id;
-        const { name, link, } = req.body;
+        const { name, link } = req.body;
         let updateFields = {
             name,
             link,
         };
-        const about = await Podcast.findById(id = podcastId);
-        if (!about) {
+        const podcast = await Podcast.findById(id = podcastId);
+        if (!podcast) {
             return res.status(404).json({ error: 'Podcast not found' });
         }
 
-        // Check if the image file exists
-        const pictureLocation = path.join(__dirname, '..', about.pictureLocation);
-        try {
-            await fs.access(pictureLocation, fs.constants.F_OK); // Check if file exists
-            // If file exists, proceed to delete it
-            await fs.unlink(pictureLocation);
-        } catch (accessError) {
-            // Handle the error if the file does not exist
-            if (accessError.code !== 'ENOENT') {
-                throw accessError; // re-throw error if it's not "file not found"
-            }
-        }
-        // If banner is being updated
+        // If picture is being updated
         if (req.files['picture']) {
             const picture = req.files['picture'][0].filename;
             const pictureLocation = req.files['picture'][0].path;
             updateFields.picture = picture;
             updateFields.pictureLocation = pictureLocation;
+
+            // Check if the image file exists and delete it
+            const picturePath = path.join(__dirname, '..', podcast.pictureLocation);
+            try {
+                await fs.access(picturePath, fs.constants.F_OK); // Check if file exists
+                // If file exists, proceed to delete it
+                await fs.unlink(picturePath);
+            } catch (accessError) {
+                // Handle the error if the file does not exist
+                if (accessError.code !== 'ENOENT') {
+                    throw accessError; // re-throw error if it's not "file not found"
+                }
+            }
         }
+
         await Podcast.findByIdAndUpdate(podcastId, updateFields);
 
         res.status(200).json({ message: 'Podcast updated successfully' });

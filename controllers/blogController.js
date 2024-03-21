@@ -55,25 +55,29 @@ const updateBlog = async (req, res) => {
             return res.status(404).json({ error: 'Blogs not found' });
         }
 
-        // Check if the image file exists
-        const pictureLocation = path.join(__dirname, '..', blog.pictureLocation);
-        try {
-            await fs.access(pictureLocation, fs.constants.F_OK); // Check if file exists
-            // If file exists, proceed to delete it
-            await fs.unlink(pictureLocation);
-        } catch (accessError) {
-            // Handle the error if the file does not exist
-            if (accessError.code !== 'ENOENT') {
-                throw accessError; // re-throw error if it's not "file not found"
-            }
-        }
-        // If banner is being updated
+        // If a new picture is being uploaded
         if (req.files['picture']) {
+            // Check if the image file exists and delete it
+            const pictureLocation1 = path.join(__dirname, '..', blog.pictureLocation);
+            try {
+                await fs.access(pictureLocation1, fs.constants.F_OK); // Check if file exists
+                // If file exists, proceed to delete it
+                await fs.unlink(pictureLocation1);
+            } catch (accessError) {
+                // Handle the error if the file does not exist
+                if (accessError.code !== 'ENOENT') {
+                    throw accessError; // re-throw error if it's not "file not found"
+                }
+            }
+
+            // Update picture fields
             const picture = req.files['picture'][0].filename;
             const pictureLocation = req.files['picture'][0].path;
             updateFields.picture = picture;
             updateFields.pictureLocation = pictureLocation;
         }
+
+        // Update blog fields
         await Blogs.findByIdAndUpdate(blogsId, updateFields);
 
         res.status(200).json({ message: 'Blogs updated successfully' });

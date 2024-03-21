@@ -62,22 +62,7 @@ const updateService = async (req, res) => {
         if (!services) {
             return res.status(404).json({ error: 'services not found' });
         }
-        // Check if the image file exists
-        const imagePath = path.join(__dirname, '..', services.imageLocation);
-        const bannerPath = path.join(__dirname, '..', services.bannerLocation);
-        try {
-            await fs.access(imagePath, fs.constants.F_OK); // Check if file exists
-            // If file exists, proceed to delete it
-            await fs.unlink(imagePath);
-            await fs.access(bannerPath, fs.constants.F_OK); // Check if file exists
-            // If file exists, proceed to delete it
-            await fs.unlink(bannerPath);
-        } catch (accessError) {
-            // Handle the error if the file does not exist
-            if (accessError.code !== 'ENOENT') {
-                throw accessError; // re-throw error if it's not "file not found"
-            }
-        }
+        
         let updateFields = {
             name,
             sortName,
@@ -93,6 +78,19 @@ const updateService = async (req, res) => {
             const bannerLocation = req.files['banner'][0].path;
             updateFields.banner = banner;
             updateFields.bannerLocation = bannerLocation;
+            
+            // Check if the banner file exists and delete it
+            const bannerPath = path.join(__dirname, '..', services.bannerLocation);
+            try {
+                await fs.access(bannerPath, fs.constants.F_OK); // Check if file exists
+                // If file exists, proceed to delete it
+                await fs.unlink(bannerPath);
+            } catch (accessError) {
+                // Handle the error if the file does not exist
+                if (accessError.code !== 'ENOENT') {
+                    throw accessError; // re-throw error if it's not "file not found"
+                }
+            }
         }
 
         // If image is being updated
@@ -101,6 +99,19 @@ const updateService = async (req, res) => {
             const imageLocation = req.files['image'][0].path;
             updateFields.image = image;
             updateFields.imageLocation = imageLocation;
+            
+            // Check if the image file exists and delete it
+            const imagePath = path.join(__dirname, '..', services.imageLocation);
+            try {
+                await fs.access(imagePath, fs.constants.F_OK); // Check if file exists
+                // If file exists, proceed to delete it
+                await fs.unlink(imagePath);
+            } catch (accessError) {
+                // Handle the error if the file does not exist
+                if (accessError.code !== 'ENOENT') {
+                    throw accessError; // re-throw error if it's not "file not found"
+                }
+            }
         }
 
         await Services.findByIdAndUpdate(serviceId, updateFields);
@@ -111,6 +122,7 @@ const updateService = async (req, res) => {
         res.status(500).json({ message: 'Server Error' });
     }
 };
+
 
 // Get service by ID
 const getServiceById = async (req, res) => {

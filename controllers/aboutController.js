@@ -66,14 +66,7 @@ const createAbout = async (req, res) => {
 const updateAbout = async (req, res) => {
     try {
         const aboutId = req.params.id;
-        const { name,
-            titleOne,
-            titleTwo,
-            containtOne,
-            visionTitleOne,
-            visionDesscriptionOne,
-            visionTitleTwo,
-            visionDesscriptionTwo, } = req.body;
+        const { name, titleOne, titleTwo, containtOne, visionTitleOne, visionDesscriptionOne, visionTitleTwo, visionDesscriptionTwo } = req.body;
         let updateFields = {
             name,
             titleOne,
@@ -86,39 +79,49 @@ const updateAbout = async (req, res) => {
         };
         const about = await About.findById(id = aboutId);
         if (!about) {
-            return res.status(404).json({ error: 'about not found' });
+            return res.status(404).json({ error: 'About not found' });
         }
 
-        // Check if the image file exists
-        const visionBannerLocation = path.join(__dirname, '..', about.visionBannerLocation);
-        const bannerPath = path.join(__dirname, '..', about.bannerLocation);
-        try {
-            await fs.access(visionBannerLocation, fs.constants.F_OK); // Check if file exists
-            // If file exists, proceed to delete it
-            await fs.unlink(visionBannerLocation);
-            await fs.access(bannerPath, fs.constants.F_OK); // Check if file exists
-            // If file exists, proceed to delete it
-            await fs.unlink(bannerPath);
-        } catch (accessError) {
-            // Handle the error if the file does not exist
-            if (accessError.code !== 'ENOENT') {
-                throw accessError; // re-throw error if it's not "file not found"
-            }
-        }
         // If banner is being updated
         if (req.files['banner']) {
             const banner = req.files['banner'][0].filename;
             const bannerLocation = req.files['banner'][0].path;
             updateFields.banner = banner;
             updateFields.bannerLocation = bannerLocation;
+
+            // Check if the image file exists and delete it
+            const bannerPath = path.join(__dirname, '..', about.bannerLocation);
+            try {
+                await fs.access(bannerPath, fs.constants.F_OK); // Check if file exists
+                // If file exists, proceed to delete it
+                await fs.unlink(bannerPath);
+            } catch (accessError) {
+                // Handle the error if the file does not exist
+                if (accessError.code !== 'ENOENT') {
+                    throw accessError; // re-throw error if it's not "file not found"
+                }
+            }
         }
 
-        // If image is being updated
+        // If visionBanner is being updated
         if (req.files['visionBanner']) {
             const visionBanner = req.files['visionBanner'][0].filename;
             const visionBannerLocation = req.files['visionBanner'][0].path;
             updateFields.visionBanner = visionBanner;
             updateFields.visionBannerLocation = visionBannerLocation;
+
+            // Check if the image file exists and delete it
+            const visionBannerPath = path.join(__dirname, '..', about.visionBannerLocation);
+            try {
+                await fs.access(visionBannerPath, fs.constants.F_OK); // Check if file exists
+                // If file exists, proceed to delete it
+                await fs.unlink(visionBannerPath);
+            } catch (accessError) {
+                // Handle the error if the file does not exist
+                if (accessError.code !== 'ENOENT') {
+                    throw accessError; // re-throw error if it's not "file not found"
+                }
+            }
         }
 
         await About.findByIdAndUpdate(aboutId, updateFields);
@@ -129,6 +132,7 @@ const updateAbout = async (req, res) => {
         res.status(500).json({ message: 'Server Error' });
     }
 };
+
 
 // Get about by ID
 const getAboutById = async (req, res) => {
