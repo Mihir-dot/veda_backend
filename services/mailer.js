@@ -8,8 +8,8 @@ function isFileEmpty(filePath) {
     return stats.size === 0;
 }
 // Function to send email with or without attachment
-const sendEmailWithAttachment = async function (req) {
-    console.log('req: ', req.body);
+const sendEmailWithAttachment = async function (req, replacedTemplate) {
+
     // Create a transporter object using SMTP transport
     const file = req.file
     let transporter = nodemailer.createTransport({
@@ -24,11 +24,11 @@ const sendEmailWithAttachment = async function (req) {
 
     // Define email options
     let mailOptions = {
-        from: 'vida.org.au.in@gmail.com', // Sender address (your Gmail address)
-        to: 'mihir.sstech@gmail.com', // Receiver address
-        subject: 'Test Email', // Subject line
-        text: 'This is a test email sent from Node.js using nodemailer.', // Plain text body
-        html: '<b>This is a test email sent from Node.js using nodemailer.</b>', // HTML body
+        from: 'vida.org.au.in@gmail.com',
+        // to: 'bhavisha.sstech@gmail.com',
+        to: 'vida.org.au.in@gmail.com',
+        subject: 'From Vida Customer',
+        html: replacedTemplate,
         attachments: []
     };
 
