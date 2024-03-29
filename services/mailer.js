@@ -1,7 +1,6 @@
 const fs = require('fs');
 const nodemailer = require('nodemailer');
 
-
 // Function to check if a file is empty
 function isFileEmpty(filePath) {
     const stats = fs.statSync(filePath);
@@ -25,8 +24,8 @@ const sendEmailWithAttachment = async function (req, replacedTemplate) {
     // Define email options
     let mailOptions = {
         from: 'vida.org.au.in@gmail.com',
-        // to: 'bhavisha.sstech@gmail.com',
-        to: 'vida.org.au.in@gmail.com',
+        to: 'savaliyabhavisha456@gmail.com',
+        // to: 'vida.org.au.in@gmail.com',
         subject: 'From Vida Customer',
         html: replacedTemplate,
         attachments: []

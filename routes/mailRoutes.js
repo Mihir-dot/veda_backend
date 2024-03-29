@@ -10,12 +10,14 @@ const upload = multer({ dest: 'uploads/' });
 // Route for Create a FAQ
 router.post('/sendEmail', upload.single('file'), async (req, res) => {
     try {
-        const { name, email, phone, message } = req.body
+        const { name, email, phone, message, subject, interpreter } = req.body
         const replacedTemplate = emailTemplate
             .replace('{{name}}', name ? name : "")
             .replace('{{email}}', email ? email : "")
             .replace('{{phone}}', phone ? phone : "")
             .replace('{{text}}', message ? message : "")
+            .replace('{{subject}}', subject ? `<tr><th>Subject</th><td>${subject}</td></tr>` : "")
+            .replace('{{interpreter}}', interpreter ? `<tr><th>Interpreter</th><td>${interpreter}</td></tr>` : "")
         await sendEmailWithAttachment(req, replacedTemplate);
         res.status(200).send('Email sent successfully.');
     } catch (error) {
